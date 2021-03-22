@@ -55,7 +55,7 @@ def main():
 		    '--add-data=torbundle;torbundle'
 		])
 
-		shutil.copy(os.path.join('dist', 'client.exe'), os.path.join('..', 'payloads'))
+		#shutil.copy(os.path.join('dist', 'client.exe'), os.path.join('..', 'payloads'))
 		print("[*] Build finished")
 
 if __name__ == '__main__':
