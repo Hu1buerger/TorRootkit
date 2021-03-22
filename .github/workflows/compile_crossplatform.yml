@@ -32,7 +32,7 @@ jobs:
 
       - name: "Test"
         run: |
-            tree
+            tree /f /a
 
       - uses: "marvinpinto/action-automatic-releases@latest"
         with:
