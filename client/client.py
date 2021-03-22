@@ -1,10 +1,10 @@
 from network import ClientSocket, Tor
-from argparse import ArgumentParser
+import sys
 import tasks
 
 
-onion = ""
-port = 0
+onion = sys.argv[1]
+port = sys.argv[2]
 
 
 class Client:
