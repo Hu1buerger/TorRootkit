@@ -6,18 +6,19 @@ import sys
 import shutil
 
 
-def getTorExpertBundle():
+def get_tor_expert_bundle():
 	# create directory for the tor expert bundle
 	os.mkdir('torbundle')
-	os.chdir('torbundle')
-	
+
+	torbundle_dir = os.path.abspath('torbundle')
+
 	# download tor expert bundle
 	torURL = 'https://www.torproject.org/dist/torbrowser/10.0.12/tor-win32-0.4.5.6.zip'
 	fileData = requests.get(torURL, allow_redirects=True)
 
 	# write downloaded tor expert bundle
 	try:
-		file = open('tor.zip', 'wb')
+		file = open(os.path.join(torbundle_dir, 'tor.zip'), 'wb')
 		file.write(fileData.content)
 	except Exception as error:
 		print('[-] Error while writing tor expert bundle: {}'.format(error))
@@ -27,7 +28,7 @@ def getTorExpertBundle():
 	
 	# unzip tor expert bundle
 	try:
-		file = zipfile.ZipFile('tor.zip')
+		file = zipfile.ZipFile(os.path.join(torbundle_dir, 'tor.zip'))
 		file.extractall('.')
 	except Exception as error:
 		print("[-] Error while unpacking tor library: {}".format('error'))
@@ -35,19 +36,18 @@ def getTorExpertBundle():
 	else:
 		print("[*] Unpacked Tor expert bundle")
 
-	# change directory back to \client
-	os.chdir('..')
 
 
+def main(): 
+	payload_dir = os.path.abspath(os.path.join('..', 'payloads'))
 
-def main():
-	# create payload directory 
-	os.mkdir(os.path.join('..', 'payloads'))
+	if not os.path.isdir(payload_dir):
+		os.mkdir(payload_dir)
 
 	if os.name == 'nt':
 		# dont download everytime
 		if not os.path.isdir('torbundle'):
-			getTorExpertBundle()
+			get_tor_expert_bundle()
 
 		PyInstaller.__main__.run([
 		    'client.py',
@@ -55,7 +55,13 @@ def main():
 		    '--add-data=torbundle;torbundle'
 		])
 
-		shutil.copy(os.path.join('dist', 'client.exe'), os.path.join('..', 'payloads'))
+		executable_name = 'client.exe'
+		executable_dir = os.path.join('dist', executable_name)
+
+
+	if executable_name not in os.listdir(payload_dir):
+		shutil.copy(executable_dir, payload_dir)
+
 
 if __name__ == '__main__':
 	main()
