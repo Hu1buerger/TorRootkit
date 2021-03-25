@@ -43,7 +43,7 @@ jobs:
     runs-on: ubuntu-18.04
 
     steps:
-      - uses: actions/checkout@2
+      - uses: actions/checkout@v2
       - name: Setup Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -54,10 +54,11 @@ jobs:
           pip install -r client/requirements.txt
 
       - name: "Build Client"
-          run: python client/build.py
+        run: |
+            python client/build.py
 
       - uses: "marvinpinto/action-automatic-releases@latest"
-          with:
+        with:
             repo_token: "${{ secrets.GITHUB_TOKEN }}"
             automatic_release_tag: "latest"
             prerelease: true
@@ -69,7 +70,7 @@ jobs:
     runs-on: macos-latest
 
     steps:
-      - uses: actions/checkout@2
+      - uses: actions/checkout@v2
       - name: Setup Python 3.9
         uses: actions/setup-python@v2
         with:
@@ -80,10 +81,10 @@ jobs:
           pip install -r client/requirements.txt
 
       - name: "Build Client"
-          run: python client/build.py
+        run: python client/build.py
 
       - uses: "marvinpinto/action-automatic-releases@latest"
-          with:
+        with:
             repo_token: "${{ secrets.GITHUB_TOKEN }}"
             automatic_release_tag: "latest"
             prerelease: true
